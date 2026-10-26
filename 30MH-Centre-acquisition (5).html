@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Centre d'acquisition 30MH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800;1,900&display=swap">
+<style>
+/* Identité 30 Minute HIT : bandeau noir + logo, bleu ciel de marque en aplat, bleu foncé pour les traits et le texte, Poppins italique lourd en titres */
+:root{
+  --bg:#f3f6f8; --surface:#ffffff; --surface-2:#eef4f8; --ink:#141414; --muted:#56616b; --line:#dbe3e9;
+  --sky:#8dcdf3; --sky-soft:#e3f2fc; --on-sky:#141414;
+  --accent:#16679a; --heat-ink:#ffffff;
+  --steel:#7f7f7f; --bench:#8e979f; --s2:#141414;
+  --ok:#1d7a52; --ok-soft:#e1f2e9; --warn:#8a5a0e; --warn-soft:#fbf0dc; --bad:#b4232c; --bad-soft:#fbe4e5;
+  --band:#141414; --band-ink:#ffffff; --band-muted:#b8c2ca;
+  --display:"Poppins",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Poppins",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1013; --surface:#161a1e; --surface-2:#1c2227; --ink:#f1f4f6; --muted:#9ca7b0; --line:#2a3239;
+  --sky:#8dcdf3; --sky-soft:#13303f; --on-sky:#141414;
+  --accent:#8dcdf3; --heat-ink:#0d1013;
+  --steel:#9a9a9a; --bench:#7f8a93; --s2:#e9eef2;
+  --ok:#5cc58f; --ok-soft:#12301f; --warn:#e8b54e; --warn-soft:#33270f; --bad:#ff7b80; --bad-soft:#3a1517;
+  --band:#000000; --band-ink:#ffffff; --band-muted:#a9b4bc; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1013; --surface:#161a1e; --surface-2:#1c2227; --ink:#f1f4f6; --muted:#9ca7b0; --line:#2a3239;
+  --sky:#8dcdf3; --sky-soft:#13303f; --on-sky:#141414;
+  --accent:#8dcdf3; --heat-ink:#0d1013;
+  --steel:#9a9a9a; --bench:#7f8a93; --s2:#e9eef2;
+  --ok:#5cc58f; --ok-soft:#12301f; --warn:#e8b54e; --warn-soft:#33270f; --bad:#ff7b80; --bad-soft:#3a1517;
+  --band:#000000; --band-ink:#ffffff; --band-muted:#a9b4bc; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{color-scheme:light}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14.5px;line-height:1.5;font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--band)}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.band{background:var(--band);color:var(--band-ink);border-bottom:6px solid var(--sky)}
+header.band .wrap{padding-block:18px 0;display:flex;flex-direction:column;gap:14px}
+.brandrow{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px 18px}
+.brand{display:flex;align-items:center;gap:16px;flex-wrap:wrap;min-width:0}
+.brand img{height:52px;width:auto;display:block;max-width:100%}
+.brand .ttl{display:flex;flex-direction:column;gap:2px;padding-left:16px;border-left:2px solid #ffffff2e}
+.eyebrow{font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:11.5px;color:var(--sky)}
+h1{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(22px,3.2vw,32px);line-height:1;margin:0;letter-spacing:-.01em;text-transform:uppercase;text-wrap:balance}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.controls label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--band-muted);display:flex;flex-direction:column;gap:4px}
+select,input,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px 9px}
+header.band select{background:#ffffff12;color:var(--band-ink);border-color:#ffffff3a;font-size:13.5px}
+header.band select option{color:#141414;background:#fff}
+.seg{display:inline-flex;border:1px solid #ffffff3a;border-radius:999px;overflow:hidden}
+.seg button{font:inherit;font-size:13px;font-weight:600;background:transparent;color:var(--band-ink);border:0;padding:7px 13px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--sky);color:var(--on-sky)}
+.custom{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+nav.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+nav.tabs button{font-family:var(--display);font-weight:700;font-style:italic;font-size:14px;letter-spacing:.04em;text-transform:uppercase;background:transparent;color:var(--band-ink);opacity:.6;border:0;border-bottom:4px solid transparent;padding:10px 14px 8px;cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+nav.tabs button:hover{opacity:.9}
+nav.tabs button[aria-selected="true"]{opacity:1;border-bottom-color:var(--sky);color:var(--sky)}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+main .wrap{padding-block:24px 48px;display:flex;flex-direction:column;gap:20px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;min-width:0}
+.panel h2{font-family:var(--display);font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:-.005em;font-size:19px;margin:0 0 4px;line-height:1.2}
+.panel .sub{color:var(--muted);font-size:13px;margin:0 0 14px;max-width:72ch}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:20px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 15px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.kpi .val{font-family:var(--display);font-weight:800;font-size:28px;line-height:1.1;letter-spacing:-.02em}
+.kpi .cmp{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.up{color:var(--ok)} .down{color:var(--bad)} .flat{color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;padding:4px 10px;border-radius:999px}
+.chip.ok{background:var(--ok-soft);color:var(--ok)} .chip.warn{background:var(--warn-soft);color:var(--warn)} .chip.bad{background:var(--bad-soft);color:var(--bad)} .chip.neutral{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.panel.hero{background:var(--band);color:#fff;border-color:var(--band)}
+.panel.hero .tag{color:var(--sky)}
+.panel.hero .reasons li{color:#e4eaee}
+.decision{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:26px}
+@media (max-width:820px){.decision{grid-template-columns:1fr}}
+.verdict{font-family:var(--display);font-weight:900;font-style:italic;font-size:clamp(28px,4vw,44px);text-transform:uppercase;line-height:1;margin:10px 0 12px;letter-spacing:-.02em;text-wrap:balance}
+.verdict span{background:var(--sky);color:var(--on-sky);padding:0 .18em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.reasons{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font-size:13.5px}
+.reasons li{max-width:70ch}
+.reasons li::marker{color:var(--sky)}
+.funnel{display:flex;flex-direction:column;gap:14px}
+.fstage{display:grid;grid-template-columns:150px minmax(0,1fr) 92px;gap:10px;align-items:center}
+@media (max-width:520px){.fstage{grid-template-columns:1fr}}
+.fstage .nm{font-weight:600;font-size:13.5px}
+.fstage .nm small{display:block;color:var(--muted);font-weight:400;font-size:12px}
+.bars{display:flex;flex-direction:column;gap:4px}
+.bar{position:relative;height:16px;background:var(--surface-2);border-radius:999px;overflow:hidden}
+.bar>i{position:absolute;inset:0 auto 0 0;border-radius:999px}
+.bar.st>i{background:var(--accent)} .bar.fr>i{background:var(--bench);opacity:.5}
+.fstage .nums{font-size:13px;text-align:right;line-height:1.3}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:4px;border-radius:2px;display:inline-block}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;position:sticky;top:0;background:var(--surface)}
+tr.click{cursor:pointer} tr.click:hover td{background:var(--surface-2)}
+.chart svg{width:100%;height:auto;display:block}
+.btn{font:inherit;font-size:13.5px;font-weight:600;border-radius:999px;padding:8px 16px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--sky);border-color:var(--sky);color:var(--on-sky);font-weight:700}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.form{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:12px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:600}
+.form input{width:100%}
+textarea{width:100%;min-height:170px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}
+.note{font-size:12.5px;color:var(--muted)}
+.msg{font-size:13px;padding:9px 12px;border-radius:10px}
+.msg.ok{background:var(--ok-soft);color:var(--ok)} .msg.bad{background:var(--bad-soft);color:var(--bad)} .msg.warn{background:var(--warn-soft);color:var(--warn)}
+.heat{display:grid;gap:4px;min-width:640px}
+.heat .c{padding:9px 4px;text-align:center;font-size:12px;border-radius:6px;font-weight:600}
+.heat .h{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:center;padding:4px 0}
+.heat .y{font-weight:800;font-style:italic;font-size:15px;display:flex;align-items:center}
+.sim{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:22px}
+@media (max-width:820px){.sim{grid-template-columns:1fr}}
+.out{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px}
+.out div{background:var(--sky-soft);border-radius:12px;padding:10px 12px}
+.out b{display:block;font-size:24px;font-weight:800;line-height:1.15}
+.out span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.method dl{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:8px 18px;margin:0}
+@media (max-width:620px){.method dl{grid-template-columns:1fr}}
+.method dt{font-weight:700}
+.method dd{margin:0;color:var(--muted)}
+.empty{padding:30px 10px;text-align:center;color:var(--muted)}
+.tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.selrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 10px 8px 18px;align-self:flex-start}
+.selrow label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn.danger[data-confirm="1"]{background:var(--bad);color:#fff}
+.chk{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+td.ck,th.ck{text-align:center;width:36px;padding-left:6px;padding-right:6px}
+header.band .btn.print{background:transparent;color:var(--band-ink);border-color:#ffffff4d}
+header.band .btn.print:hover{border-color:var(--sky);color:var(--sky)}
+.printhead{display:none}
+@media print{
+  :root,:root[data-theme]{--bg:#ffffff;--surface:#ffffff;--surface-2:#eef4f8;--ink:#141414;--muted:#4f5a63;--line:#d6dee4;--sky:#8dcdf3;--sky-soft:#e3f2fc;--accent:#16679a;--heat-ink:#ffffff;--bench:#8e979f;--s2:#141414;--ok:#1d7a52;--ok-soft:#e1f2e9;--warn:#8a5a0e;--warn-soft:#fbf0dc;--bad:#b4232c;--bad-soft:#fbe4e5;--band:#141414;color-scheme:light}
+  @page{size:letter;margin:12mm}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:11px;background:#fff}
+  header.band,body::before,.noprint{display:none!important}
+  .printhead{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#141414;color:#fff;border-bottom:5px solid var(--sky);border-radius:12px;padding:12px 16px;margin-bottom:6px}
+  .printhead img{height:38px;width:auto}
+  .printhead h1{font-size:20px;color:#fff}
+  main .wrap{padding:0!important;max-width:none;gap:12px}
+  .panel,.kpi{break-inside:avoid;page-break-inside:avoid;box-shadow:none}
+  .pblock{break-before:page;page-break-before:always;display:flex;flex-direction:column;gap:12px}
+  .pblock.first{break-before:auto;page-break-before:auto}
+  .pblock>.ptitle{font-family:var(--display);font-weight:900;font-style:italic;text-transform:uppercase;font-size:18px;color:var(--ink);margin:0;display:flex;align-items:center;gap:8px}
+  .pblock>.ptitle::before{content:"";width:22px;height:8px;background:var(--sky);border-radius:2px}
+  .grid2{grid-template-columns:1fr 1fr}
+  .kpis{grid-template-columns:repeat(4,1fr)}
+  .sim{grid-template-columns:1fr 1.3fr}
+  input,select{border:1px solid var(--line)}
+  .tablewrap{overflow:visible}
+  th{position:static}
+  .heat{min-width:0}
+  .selrow{border:0;padding:0}
+}
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="wrap">
+    <div class="brandrow">
+      <div class="brand">
+        <img src="data:image/webp;base64,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" alt="30 Minute HIT">
+        <div class="ttl"><div class="eyebrow">Repentigny</div><h1 id="appTitle">Centre d'acquisition</h1></div>
+      </div>
+      <div class="controls">
+        <span class="seg" id="segLang" role="group" aria-label="Langue / Language">
+          <button type="button" data-l="fr" aria-pressed="true">FR</button>
+          <button type="button" data-l="en" aria-pressed="false">EN</button>
+        </span>
+        <button type="button" class="btn print" id="btnPrint">Imprimer / PDF</button>
+        <label for="selMonth" id="wrapMonth"><span id="lblMonth">Mois analysé</span><select id="selMonth"></select></label>
+        <div class="custom" id="wrapCustom" hidden>
+          <label for="selFrom"><span id="lblFrom">De</span><select id="selFrom"></select></label>
+          <label for="selTo"><span id="lblTo">À</span><select id="selTo"></select></label>
+        </div>
+        <label><span id="lblWin">Fenêtre</span>
+          <span class="seg" id="segWin" role="group">
+            <button type="button" data-w="1" aria-pressed="false">Mois</button>
+            <button type="button" data-w="3" aria-pressed="true">3 mois</button>
+            <button type="button" data-w="12" aria-pressed="false">12 mois</button>
+            <button type="button" data-w="c" aria-pressed="false">Personnalisée</button>
+          </span>
+        </label>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" id="tabs">
+      <button role="tab" data-t="bord" aria-selected="true">Tableau de bord</button>
+      <button role="tab" data-t="entonnoir" aria-selected="false">Entonnoir</button>
+      <button role="tab" data-t="budget" aria-selected="false">Budget &amp; acquisition</button>
+      <button role="tab" data-t="saison" aria-selected="false">Saisonnalité</button>
+      <button role="tab" data-t="donnees" aria-selected="false">Données</button>
+      <button role="tab" data-t="methode" aria-selected="false">Méthode</button>
+    </nav>
+  </div>
+</header>
+
+<main><div class="wrap" id="view"></div></main>
+
+<script>
+(function(){
+"use strict";
+/* ---------- état ---------- */
+const S = {
+  months:{}, params:{cible:200, cibleLT:260, echeance:6, budgetMin:1500, budgetMax:2000, prixMensuel:75},
+  sel:null, win:3, custom:false, from:null, to:null, tab:"bord", selDel:new Set(), canEdit:true, loaded:false, parsed:null, editing:null, lang:"fr"
+};
+const T=(fr,en)=>S.lang==="en"?en:fr;
+const LOC=()=>S.lang==="en"?"en-CA":"fr-CA";
+
+/* ---------- formats ---------- */
+const MOIS_FR=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+const MOIS_EN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MOIS=()=>S.lang==="en"?MOIS_EN:MOIS_FR;
+const fmtM=k=>{const [y,m]=k.split("-");return MOIS()[+m-1]+" "+y};
+const keyAdd=(k,n)=>{let [y,m]=k.split("-").map(Number);m+=n;while(m<1){m+=12;y--}while(m>12){m-=12;y++}return y+"-"+String(m).padStart(2,"0")};
+const NF=(d0,d1)=>new Intl.NumberFormat(LOC(),{minimumFractionDigits:d0,maximumFractionDigits:d1});
+const fmt0=v=>NF(0,0).format(v), fmt1=v=>NF(1,1).format(v);
+const ok=v=>v!=null&&isFinite(v);
+const cur=(v,d)=>{const s=NF(d,d).format(Math.abs(v));const neg=v<0?"-":"";return S.lang==="en"?neg+"$"+s:neg+s+" $"};
+const money=v=>ok(v)?cur(Math.round(v),0):"—";
+const money2=v=>ok(v)?cur(v,2):"—";
+const pct=v=>ok(v)?fmt1(v*100)+(S.lang==="en"?"%":" %"):"—";
+const pctAxis=v=>fmt0(v*100)+(S.lang==="en"?"%":" %");
+const num=v=>ok(v)?fmt0(v):"—";
+const ratio=v=>ok(v)?fmt1(v)+(S.lang==="en"?":1":" : 1"):"—";
+const pts=v=>fmt1(Math.abs(v))+" pt";
+const dv=(a,b)=>(a==null||b==null||!b)?null:a/b;
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const keys=()=>Object.keys(S.months).sort();
+const Q=s=>T("« "+s+" »","“"+s+"”");
+
+/* ---------- calculs ---------- */
+const COUNT=["leads","booked","schedBook","schedCame","came","newActive","expiredPrev","activePrev","ltv","impressions","initRev","spend","autres"];
+function aggregate(endKey,w){
+  const ks=[];for(let i=w-1;i>=0;i--){const k=keyAdd(endKey,-i);if(S.months[k])ks.push(k)}
+  if(!ks.length)return null;
+  const a={n:ks.length,keys:ks};COUNT.forEach(f=>a[f]=0);
+  const fr={booked:[],completed:[],sales:[],overall:[],churn:[]};
+  ks.forEach(k=>{const d=S.months[k];COUNT.forEach(f=>a[f]+=+(d[f]||0));
+    if(d.fr)Object.keys(fr).forEach(f=>{if(d.fr[f]!=null)fr[f].push(d.fr[f])})});
+  const mean=v=>v.length?v.reduce((x,y)=>x+y,0)/v.length:null;
+  a.fr={};Object.keys(fr).forEach(f=>a.fr[f]=mean(fr[f]));
+  const dep=a.spend+a.autres,cac=dv(dep,a.newActive),ltvM=dv(a.ltv,a.newActive);
+  return Object.assign(a,{dep,
+    rBook:dv(a.booked,a.leads), rShow:dv(a.schedCame,a.schedBook), rClose:dv(a.newActive,a.came),
+    rGlobal:dv(a.newActive,a.leads), churn:dv(a.expiredPrev,a.activePrev), net:a.newActive-a.expiredPrev,
+    cpl:dv(dep,a.leads), cpm:a.impressions?a.spend/a.impressions*1000:null, lp1k:a.impressions?a.leads/a.impressions*1000:null,
+    cpEssai:dv(dep,a.came), cac, ltvM, initM:dv(a.initRev,a.newActive), roiInit:dv(a.initRev,dep),
+    ltvcac:(cac&&ltvM)?ltvM/cac:null});
+}
+const STAGES=[
+  {k:"rBook",f:"booked",nm:["Réservation d'essai","Trial booking"],d:["Essais réservés ÷ leads","Booked trials ÷ leads"],num:"booked",den:"leads"},
+  {k:"rShow",f:"completed",nm:["Présence à l'essai","Trial show-up"],d:["Venues ÷ essais planifiés","Show-ups ÷ scheduled trials"],num:"schedCame",den:"schedBook"},
+  {k:"rClose",f:"sales",nm:["Closing en vente","Sales close"],d:["Nouveaux membres ÷ venues","New members ÷ show-ups"],num:"newActive",den:"came"},
+  {k:"rGlobal",f:"overall",nm:["Conversion globale","Overall conversion"],d:["Nouveaux membres ÷ leads","New members ÷ leads"],num:"newActive",den:"leads"}
+];
+const SN=s=>T(s.nm[0],s.nm[1]), SD=s=>T(s.d[0],s.d[1]);
+function losses(a){
+  return STAGES.slice(0,3).map(s=>{const r=a[s.k],f=a.fr[s.f];
+    if(r==null||f==null||r>=f)return {s,lost:0,r,f};
+    return {s,lost:a.newActive*(Math.min(f/r,4)-1),r,f}});
+}
+function diagnose(a,prev){
+  const out={reasons:[],level:"neutral",verdict:T("Données insuffisantes","Not enough data"),action:""};
+  if(!a||!a.leads)return out;
+  const L=losses(a).filter(x=>x.lost>0.25).sort((x,y)=>y.lost-x.lost);
+  const gap=s=>(a[s.k]!=null&&a.fr[s.f]!=null)?(a[s.k]-a.fr[s.f]):null;
+  const weak=STAGES.slice(0,3).filter(s=>gap(s)!=null&&gap(s)<-0.05);
+  const r=a.ltvcac;
+  if(r==null){out.verdict=T("Aucun nouveau membre sur la période","No new members in this period");out.level="bad";
+    out.reasons.push(T("Aucune vente enregistrée : le coût d'acquisition est incalculable. Vérifier d'abord le suivi des essais avant toute dépense additionnelle.","No sales recorded, so acquisition cost cannot be calculated. Check trial follow-up before spending more."));return out}
+  if(r>=5&&!weak.length){out.verdict=T("Accélérer","Accelerate");out.level="ok";out.action=T("Hausse de budget de 20 à 30 % recommandée, par paliers mensuels.","Raise the budget by 20 to 30%, in monthly steps.")}
+  else if(r>=3){out.verdict=T("Maintenir et corriger","Hold and fix");out.level="warn";
+    out.action=weak.length?T("Garder le budget actuel et corriger l'étape "+Q(SN(weak[0]).toLowerCase())+" avant d'investir davantage.","Keep the current budget and fix the "+Q(SN(weak[0]).toLowerCase())+" stage before investing more."):T("Garder le budget et tester un nouveau message ou ciblage avant de hausser.","Keep the budget and test a new message or targeting before raising it.")}
+  else {out.verdict=T("Réduire et réallouer","Cut and reallocate");out.level="bad";out.action=T("Réduire la dépense publicitaire et réaffecter une partie du budget au suivi des leads (appels, textos, relances) et à la présence aux essais.","Cut ad spend and move part of the budget to lead follow-up (calls, texts, reminders) and trial show-up.")}
+  out.reasons.push(T("Chaque nouveau membre coûte "+money(a.cac)+" en marketing et rapporte une valeur à vie projetée de "+money(a.ltvM)+" (ratio "+ratio(r)+"). Seuil sain : 3 : 1 ; zone d'accélération : 5 : 1 et plus.",
+    "Each new member costs "+money(a.cac)+" in marketing and brings a projected lifetime value of "+money(a.ltvM)+" (ratio "+ratio(r)+"). Healthy threshold: 3:1; acceleration zone: 5:1 and above."));
+  if(L.length){const t=L[0];out.reasons.push(T("Le plus gros goulot est "+Q(SN(t.s).toLowerCase())+" : "+pct(t.r)+" contre "+pct(t.f)+" pour la franchise. Au niveau franchise, cette étape aurait produit environ "+fmt1(t.lost)+" membre(s) de plus sur la période, sans dollar publicitaire additionnel.",
+    "The biggest bottleneck is "+Q(SN(t.s).toLowerCase())+": "+pct(t.r)+" versus "+pct(t.f)+" for the franchise. At franchise level, this stage would have produced about "+fmt1(t.lost)+" more member(s) in the period, with no extra ad dollars."))}
+  if(prev&&prev.lp1k&&a.lp1k){const ch=a.lp1k/prev.lp1k-1;
+    if(ch<-0.3&&a.impressions>prev.impressions)out.reasons.push(T("La portée a augmenté ("+num(a.impressions)+" impressions contre "+num(prev.impressions)+" un an plus tôt) mais le rendement en leads a chuté de "+fmt0(Math.abs(ch*100))+" % ("+fmt1(a.lp1k)+" lead par 1 000 impressions). Le ciblage achète de l'audience moins qualifiée : revoir audiences et créatifs avant d'augmenter la mise.",
+      "Reach went up ("+num(a.impressions)+" impressions versus "+num(prev.impressions)+" a year earlier) but lead yield fell "+fmt0(Math.abs(ch*100))+"% ("+fmt1(a.lp1k)+" leads per 1,000 impressions). Targeting is buying a less qualified audience: review audiences and creative before raising spend."))}
+  if(prev&&prev.cac&&a.cac){const ch=a.cac/prev.cac-1;if(Math.abs(ch)>0.25)out.reasons.push(T("Le coût par nouveau membre est passé de "+money(prev.cac)+" à "+money(a.cac)+" sur un an ("+(ch>0?"+":"−")+fmt0(Math.abs(ch*100))+" %).",
+    "Cost per new member went from "+money(prev.cac)+" to "+money(a.cac)+" over one year ("+(ch>0?"+":"−")+fmt0(Math.abs(ch*100))+"%)."))}
+  if(a.churn!=null&&a.fr.churn!=null&&a.churn>a.fr.churn+0.02)out.reasons.push(T("Le taux d'annulation ("+pct(a.churn)+") dépasse la franchise ("+pct(a.fr.churn)+"). Chaque point de rétention gagné vaut un point d'acquisition, à coût presque nul.",
+    "The cancellation rate ("+pct(a.churn)+") is above the franchise ("+pct(a.fr.churn)+"). Each point of retention gained is worth a point of acquisition, at almost no cost."));
+  if(a.net<0)out.reasons.push(T("Bilan net estimé de la période : "+a.net+" membres (ventes moins expirations). L'acquisition ne compense pas encore les départs.",
+    "Estimated net change for the period: "+a.net+" members (sales minus expirations). Acquisition is not yet replacing departures."));
+  if(a.newActive<8)out.reasons.push(T("Petit échantillon ("+a.newActive+" ventes) : confirmer la tendance sur la fenêtre de 3 ou 12 mois avant une décision budgétaire importante.",
+    "Small sample ("+a.newActive+" sales): confirm the trend on the 3- or 12-month window before a major budget decision."));
+  return out;
+}
+
+/* ---------- graphiques SVG ---------- */
+function lineChart(series,ks,o={}){
+  const W=640,H=o.h||220,P={l:52,r:30,t:14,b:30};
+  const xs=i=>P.l+(ks.length<2?0.5:i/(ks.length-1))*(W-P.l-P.r);
+  let all=[];series.forEach(s=>s.values.forEach(v=>{if(ok(v))all.push(v)}));
+  if(!all.length)return '<div class="empty">'+T("Pas encore de données pour ce graphique.","No data for this chart yet.")+'</div>';
+  let max=Math.max(...all),min=0;if(max===min)max=min+1;
+  const nice=niceTicks(min,max,4);min=nice[0];max=nice[nice.length-1];
+  const ys=v=>P.t+(1-(v-min)/(max-min))*(H-P.t-P.b);
+  const f=o.fmt||num;
+  let g="";nice.forEach(t=>{g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${ys(t)}" y2="${ys(t)}" stroke="var(--line)" stroke-width="1"/><text x="${P.l-8}" y="${ys(t)+4}" text-anchor="end" font-size="11" fill="var(--muted)">${f(t)}</text>`});
+  const step=Math.max(1,Math.ceil(ks.length/8));
+  const xl=i=>o.xl?o.xl[i]:fmtM(ks[i]).replace(/ (\d\d)(\d\d)$/," $2");
+  ks.forEach((k,i)=>{if(i%step===0||i===ks.length-1)g+=`<text x="${xs(i)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--muted)">${xl(i)}</text>`});
+  series.forEach(s=>{let d="",pen=false;s.values.forEach((v,i)=>{if(!ok(v)){pen=false;return}d+=(pen?"L":"M")+xs(i).toFixed(1)+" "+ys(v).toFixed(1)+" ";pen=true});
+    g+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.w||2.2}" ${s.dash?'stroke-dasharray="'+(s.dash===true?"5 4":s.dash)+'"':''} stroke-linejoin="round" stroke-linecap="round"/>`;
+    s.values.forEach((v,i)=>{if(ok(v)){const last=s.values.slice(i+1).every(x=>!ok(x));g+=`<circle cx="${xs(i)}" cy="${ys(v)}" r="${last?4:2.6}" fill="${s.color}"><title>${esc(s.name)} · ${o.xl?o.xl[i]:fmtM(ks[i])} : ${f(v)}</title></circle>`}})});
+  const leg='<div class="legend">'+series.map(s=>`<span><i style="background:${s.dash?'repeating-linear-gradient(90deg,'+s.color+' 0 4px,transparent 4px 7px)':s.color}"></i>${esc(s.name)}</span>`).join("")+"</div>";
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.label||"")}">${g}</svg></div>`+leg;
+}
+function niceTicks(min,max,n){const span=max-min,raw=span/n,mag=Math.pow(10,Math.floor(Math.log10(raw))),st=[1,2,2.5,5,10].map(x=>x*mag).find(x=>x>=raw)||raw;const a=Math.floor(min/st)*st,b=Math.ceil(max/st)*st,t=[];for(let v=a;v<=b+st/2;v+=st)t.push(+v.toFixed(6));return t}
+function rangeKeys(endKey,len){const out=[];const ks=keys();if(!ks.length)return out;const start=ks[0];let k=endKey;for(let i=0;i<len;i++){out.unshift(k);if(k===start)break;k=keyAdd(k,-1)}return out}
+const moneyAxis=v=>cur(v,0);
+
+/* ---------- rendu ---------- */
+const V=document.getElementById("view");
+const YOY=()=>T("vs N-1","vs LY");
+function delta(c,old,goodUp,isPct){
+  if(!ok(c)||!ok(old))return '<span class="flat">'+T("N-1 : —","LY: —")+'</span>';
+  const d=isPct?(c-old)*100:(old?c/old-1:0)*100;const cls=Math.abs(d)<0.5?"flat":((d>0)===goodUp?"up":"down");
+  return `<span class="${cls}">${d>0?"▲":d<0?"▼":"■"} ${fmt1(Math.abs(d))}${isPct?" pt":(S.lang==="en"?"%":" %")} ${YOY()}</span>`;
+}
+function kpi(lbl,val,c1,c2){return `<div class="kpi"><div class="lbl">${lbl}</div><div class="val">${val}</div><div class="cmp">${c1||""}${c2?"<span>"+c2+"</span>":""}</div></div>`}
+function winLabel(){if(S.custom)return S.from===S.to?fmtM(S.to):T(fmtM(S.from)+" à "+fmtM(S.to)+" ("+S.win+" mois)",fmtM(S.from)+" to "+fmtM(S.to)+" ("+S.win+" months)");return S.win===1?fmtM(S.sel):T(S.win+" mois se terminant en "+fmtM(S.sel),S.win+" months ending "+fmtM(S.sel))}
+const noData=()=>'<section class="panel"><div class="empty">'+T("Aucune donnée pour cette période.","No data for this period.")+'</div></section>';
+const serOf=(rk,f)=>rk.map(k=>{const x=aggregate(k,1);return x?x[f]:null});
+const serFr=(rk,f)=>rk.map(k=>{const x=aggregate(k,1);return x?x.fr[f]:null});
+const gapCell=g=>g==null?"—":(g>=0?"+":"−")+pts(g*100);
+
+function renderBord(){
+  const a=aggregate(S.sel,S.win),p=aggregate(keyAdd(S.sel,-12),S.win);
+  if(!a)return `<section class="panel"><div class="empty">${T("Aucune donnée pour "+fmtM(S.sel)+". Ajoute le rapport du mois dans l'onglet Données.","No data for "+fmtM(S.sel)+". Add the month's report in the Data tab.")}</div></section>`;
+  const dg=diagnose(a,p);
+  const chip={ok:T("Rendement fort","Strong return"),warn:T("Rendement correct, goulot à corriger","Fair return, bottleneck to fix"),bad:T("Rendement insuffisant","Weak return"),neutral:T("À compléter","Incomplete")}[dg.level];
+  let h=`<section class="panel hero"><div class="decision"><div>
+    <div class="tag">${T("Décision budget","Budget decision")} · ${esc(winLabel())}</div>
+    <div class="verdict"><span>${esc(dg.verdict)}</span></div>
+    <span class="chip ${dg.level}">${chip}</span>
+    <p style="margin:12px 0 0;font-weight:600;max-width:60ch">${esc(dg.action)}</p>
+  </div><div><div class="tag" style="margin-bottom:8px">${T("Pourquoi","Why")}</div><ul class="reasons">${dg.reasons.map(r=>"<li>"+esc(r)+"</li>").join("")}</ul></div></div></section>`;
+  h+=`<section class="kpis">
+    ${kpi("Leads",num(a.leads),delta(a.leads,p&&p.leads,true),a.n>1?T("Moy. ","Avg. ")+fmt1(a.leads/a.n)+T(" / mois"," / month"):"")}
+    ${kpi(T("Conversion globale","Overall conversion"),pct(a.rGlobal),delta(a.rGlobal,p&&p.rGlobal,true,true),"Franchise "+pct(a.fr.overall))}
+    ${kpi(T("Nouveaux membres","New members"),num(a.newActive),delta(a.newActive,p&&p.newActive,true),T("Net estimé ","Est. net ")+(a.net>0?"+":"")+a.net)}
+    ${kpi(T("Coût par lead","Cost per lead"),money2(a.cpl),delta(a.cpl,p&&p.cpl,false),T("Dépense ","Spend ")+money(a.dep))}
+    ${kpi(T("Coût par membre (CAC)","Cost per member (CAC)"),money(a.cac),delta(a.cac,p&&p.cac,false),T("Valeur à vie ","Lifetime value ")+money(a.ltvM))}
+    ${kpi(T("Ratio valeur : coût","Value-to-cost ratio"),ratio(a.ltvcac),delta(a.ltvcac,p&&p.ltvcac,true),T("Seuil sain 3 : 1","Healthy threshold 3:1"))}
+    ${kpi(T("Annulations","Cancellations"),pct(a.churn),delta(a.churn,p&&p.churn,false,true),"Franchise "+pct(a.fr.churn))}
+  </section>`;
+  h+=`<div class="grid2"><section class="panel"><h2>${T("Entonnoir vs franchise","Funnel vs franchise")}</h2><p class="sub">${esc(winLabel())}. ${T("Barre pleine : studio. Barre grise : moyenne de toutes les succursales.","Solid bar: studio. Grey bar: average of all locations.")}</p>${funnelHTML(a)}</section>`;
+  h+=`<section class="panel"><h2>${T("Même période, années précédentes","Same period, prior years")}</h2><p class="sub">${T("Comparaison à fenêtre égale pour neutraliser la saisonnalité.","Same-length window comparison to neutralize seasonality.")}</p>${yoyTable()}</section></div>`;
+  const rk=rangeKeys(S.sel,36);
+  h+=`<div class="grid2"><section class="panel"><h2>${T("Leads et dépense","Leads and spend")}</h2><p class="sub">${T("Volume de leads et dépense publicitaire mensuelle, 36 derniers mois.","Monthly lead volume and ad spend, last 36 months.")}</p>${lineChart([{name:"Leads",values:serOf(rk,"leads"),color:"var(--accent)"},{name:T("Nouveaux membres","New members"),values:serOf(rk,"newActive"),color:"var(--s2)"}],rk,{label:"Leads"})}${lineChart([{name:T("Dépense marketing ($)","Marketing spend ($)"),values:serOf(rk,"dep"),color:"var(--ink)"}],rk,{h:160,fmt:moneyAxis})}</section>`;
+  h+=`<section class="panel"><h2>${T("Conversion globale et coût par membre","Overall conversion and cost per member")}</h2><p class="sub">${T("Le signal à surveiller : la conversion qui baisse pendant que le CAC monte.","The signal to watch: conversion falling while CAC rises.")}</p>${lineChart([{name:T("Conversion studio","Studio conversion"),values:serOf(rk,"rGlobal"),color:"var(--accent)"},{name:T("Conversion franchise","Franchise conversion"),values:serFr(rk,"overall"),color:"var(--bench)",dash:true}],rk,{fmt:pctAxis})}${lineChart([{name:"CAC ($)",values:serOf(rk,"cac"),color:"var(--ink)"}],rk,{h:160,fmt:moneyAxis})}</section></div>`;
+  return h;
+}
+function funnelHTML(a){
+  return '<div class="funnel">'+STAGES.map(s=>{const r=a[s.k],f=a.fr[s.f];const w=v=>v==null?0:Math.min(100,v*100);
+    const g=(r!=null&&f!=null)?(r-f):null;
+    return `<div class="fstage"><div class="nm">${SN(s)}<small>${num(a[s.num])} / ${num(a[s.den])}</small></div>
+    <div class="bars"><div class="bar st"><i style="width:${w(r)}%"></i></div><div class="bar fr"><i style="width:${w(f)}%"></i></div></div>
+    <div class="nums"><b>${pct(r)}</b><br><span class="${g==null?"flat":g>=0?"up":"down"}">${gapCell(g)}</span></div></div>`}).join("")+
+    `<div class="legend"><span><i style="background:var(--accent)"></i>Studio</span><span><i style="background:var(--bench);opacity:.55"></i>${T("Moyenne franchise","Franchise average")}</span>${a.rClose>1?'<span>'+T("Un closing au-dessus de 100 % signifie que des ventes proviennent de personnes hors essai du mois.","A close rate above 100% means some sales came from people outside this month's trials.")+'</span>':""}</div></div>`;
+}
+function yoyTable(){
+  const rows=[0,-12,-24,-36].map(o=>{const k=keyAdd(S.sel,o);return {k,a:aggregate(k,S.win)}}).filter(r=>r.a);
+  if(rows.length<2)return '<div class="empty">'+T("Ajoute les mêmes mois des années précédentes pour comparer.","Add the same months from prior years to compare.")+'</div>';
+  const L=[["Leads",a=>num(a.leads)],[T("Réservation","Booking"),a=>pct(a.rBook)],[T("Présence","Show-up"),a=>pct(a.rShow)],["Closing",a=>pct(a.rClose)],[T("Conv. globale","Overall conv."),a=>pct(a.rGlobal)],[T("Nouveaux","New"),a=>num(a.newActive)],[T("Dépense","Spend"),a=>money(a.dep)],[T("Coût / lead","Cost / lead"),a=>money2(a.cpl)],["CAC",a=>money(a.cac)],[T("Valeur : coût","Value : cost"),a=>ratio(a.ltvcac)],[T("Annulations","Cancellations"),a=>pct(a.churn)]];
+  return `<div class="tablewrap"><table><thead><tr><th>${T("Indicateur","Metric")}</th>${rows.map(r=>"<th>"+fmtM(r.k)+"</th>").join("")}</tr></thead><tbody>${L.map(([n,f])=>"<tr><td>"+n+"</td>"+rows.map(r=>"<td>"+f(r.a)+"</td>").join("")+"</tr>").join("")}</tbody></table></div>`;
+}
+
+function renderEntonnoir(){
+  const a=aggregate(S.sel,S.win);if(!a)return noData();
+  const L=losses(a);const tot=L.reduce((x,y)=>x+y.lost,0);
+  let h=`<section class="panel"><h2>${T("Où se perdent les membres","Where members are lost")}</h2><p class="sub">${esc(winLabel())}. ${T("Pour chaque étape sous la moyenne franchise, nombre de membres supplémentaires obtenus si l'étape remontait au niveau franchise, à budget égal. C'est le gain « gratuit » à aller chercher avant d'augmenter la publicité.","For each stage below the franchise average: extra members gained if that stage reached franchise level, at the same budget. This is the “free” gain to capture before raising ad spend.")}</p>
+  <div class="tablewrap"><table><thead><tr><th>${T("Étape","Stage")}</th><th>${T("Calcul","Calculation")}</th><th>Studio</th><th>Franchise</th><th>${T("Écart","Gap")}</th><th>${T("Membres manqués","Missed members")}</th><th>${T("Valeur à vie manquée","Missed lifetime value")}</th></tr></thead><tbody>`;
+  STAGES.forEach((s,i)=>{const r=a[s.k],f=a.fr[s.f],l=L[i]||{lost:null};const g=(r!=null&&f!=null)?r-f:null;
+    h+=`<tr><td><b>${SN(s)}</b></td><td>${num(a[s.num])} / ${num(a[s.den])}</td><td>${pct(r)}</td><td>${pct(f)}</td><td class="${g==null?"flat":g>=0?"up":"down"}">${gapCell(g)}</td><td>${i<3?(l.lost>0?fmt1(l.lost):"0"):"—"}</td><td>${i<3&&l.lost>0?money(l.lost*(a.ltvM||0)):"—"}</td></tr>`});
+  h+=`</tbody></table></div><p class="note" style="margin-top:10px">${T("Total estimé : <b>"+fmt1(tot)+"</b> membre(s) et <b>"+money(tot*(a.ltvM||0))+"</b> de valeur à vie laissés sur la table pendant la période.","Estimated total: <b>"+fmt1(tot)+"</b> member(s) and <b>"+money(tot*(a.ltvM||0))+"</b> in lifetime value left on the table during the period.")}</p></section>`;
+  const rk=rangeKeys(S.sel,36);
+  h+='<div class="grid2">'+STAGES.map(s=>`<section class="panel"><h2>${SN(s)}</h2><p class="sub">${SD(s)}</p>${lineChart([{name:"Studio",values:serOf(rk,s.k),color:"var(--accent)"},{name:"Franchise",values:serFr(rk,s.f),color:"var(--bench)",dash:true}],rk,{h:190,fmt:pctAxis,label:SN(s)})}</section>`).join("")+'</div>';
+  return h;
+}
+
+function renderBudget(){
+  const a=aggregate(S.sel,S.win),y=aggregate(S.sel,12);if(!a)return noData();
+  const P=S.params;const last=S.months[S.sel]||{};
+  const actifs=last.activePrev!=null?(last.activePrev-(last.expiredPrev||0)+(last.newActive||0)):null;
+  const churn=(y&&y.churn!=null)?y.churn:a.churn;const best=bestYear();
+  let h=`<section class="kpis">
+    ${kpi(T("Coût par 1 000 impressions","Cost per 1,000 impressions"),money2(a.cpm),"",T("Achat média","Media buying"))}
+    ${kpi(T("Leads par 1 000 impressions","Leads per 1,000 impressions"),ok(a.lp1k)?fmt1(a.lp1k):"—","",T("Qualité de l'audience","Audience quality"))}
+    ${kpi(T("Coût par essai complété","Cost per completed trial"),money(a.cpEssai),"",T("Dépense ÷ venues","Spend ÷ show-ups"))}
+    ${kpi(T("Revenu initial par membre","Initial revenue per member"),money(a.initM),"",T("Premier paiement","First payment"))}
+    ${kpi(T("Retour immédiat","Immediate return"),ok(a.roiInit)?fmt1(a.roiInit)+" ×":"—","",T("Revenu initial ÷ dépense","Initial revenue ÷ spend"))}
+    ${kpi(T("Récupération du CAC","CAC payback"),(a.cac&&P.prixMensuel)?fmt1(a.cac/P.prixMensuel)+T(" mois"," months"):"—","",T("À "+money(P.prixMensuel)+" / mois","At "+money(P.prixMensuel)+" / month"))}
+  </section>`;
+  h+=`<section class="panel"><h2>${T("Simulateur d'objectif","Target simulator")}</h2><p class="sub">${T("Combien de leads et de budget faut-il pour atteindre la cible de membres, selon trois hypothèses d'entonnoir? Le calcul tient compte des départs mensuels à remplacer.","How many leads and how much budget are needed to reach the member target, under three funnel assumptions? The calculation includes monthly departures to replace.")}</p>
+  <div class="sim"><div class="form">
+    <label for="pCible">${T("Cible de membres actifs","Active member target")}<input id="pCible" type="number" value="${P.cible}"></label>
+    <label for="pEch">${T("Échéance (mois)","Timeline (months)")}<input id="pEch" type="number" min="1" value="${P.echeance}"></label>
+    <label for="pActifs">${T("Membres actifs actuels","Current active members")}<input id="pActifs" type="number" value="${actifs??""}"></label>
+    <label for="pChurn">${T("Annulations mensuelles (%)","Monthly cancellations (%)")}<input id="pChurn" type="number" step="0.1" value="${churn!=null?(churn*100).toFixed(1):""}"></label>
+    <label for="pCpl">${T("Coût par lead ($)","Cost per lead ($)")}<input id="pCpl" type="number" step="0.01" value="${a.cpl!=null?a.cpl.toFixed(2):""}"></label>
+    <label for="pPrix">${T("Revenu mensuel moyen / membre ($)","Avg. monthly revenue / member ($)")}<input id="pPrix" type="number" value="${P.prixMensuel}"></label>
+    <label for="pBmin">${T("Budget mensuel min ($)","Monthly budget min ($)")}<input id="pBmin" type="number" value="${P.budgetMin}"></label>
+    <label for="pBmax">${T("Budget mensuel max ($)","Monthly budget max ($)")}<input id="pBmax" type="number" value="${P.budgetMax}"></label>
+  </div><div id="simOut"></div></div>
+  <div class="row" style="margin-top:12px"><button class="btn noprint" id="saveParams">${T("Enregistrer comme paramètres par défaut","Save as default settings")}</button><span class="note">${T("Conversion actuelle : ","Current conversion: ")}${pct(a.rGlobal)} · ${T("franchise : ","franchise: ")}${pct(a.fr.overall)} · ${T("meilleure année : ","best year: ")}${best?pct(best.a.rGlobal)+" ("+best.y+")":"—"}</span></div></section>`;
+  const rk=rangeKeys(S.sel,36);
+  h+=`<div class="grid2"><section class="panel"><h2>${T("Coût par lead","Cost per lead")}</h2><p class="sub">${T("Dépense ÷ leads, par mois.","Spend ÷ leads, by month.")}</p>${lineChart([{name:T("Coût par lead","Cost per lead"),values:serOf(rk,"cpl"),color:"var(--accent)"}],rk,{h:190,fmt:moneyAxis})}</section>
+  <section class="panel"><h2>${T("Rendement de l'audience","Audience yield")}</h2><p class="sub">${T("Leads par 1 000 impressions. Une baisse alors que les impressions montent signale un ciblage trop large.","Leads per 1,000 impressions. A drop while impressions rise signals targeting that is too broad.")}</p>${lineChart([{name:T("Leads / 1 000 impr.","Leads / 1,000 impr."),values:serOf(rk,"lp1k"),color:"var(--s2)"}],rk,{h:190,fmt:fmt1})}</section></div>`;
+  return h;
+}
+function bestYear(){const ys=[...new Set(keys().map(k=>k.slice(0,4)))];let b=null;ys.forEach(y=>{const a=aggregate(y+"-12",12);if(a&&a.leads>0&&a.rGlobal!=null&&(!b||a.rGlobal>b.a.rGlobal))b={y,a}});return b}
+function runSim(){
+  const el=document.getElementById("simOut");if(!el)return;
+  const g=id=>{const v=parseFloat(document.getElementById(id).value);return isFinite(v)?v:null};
+  const cible=g("pCible"),ech=Math.max(1,g("pEch")||1),act=g("pActifs"),ch=(g("pChurn")||0)/100,cpl=g("pCpl"),bmin=g("pBmin"),bmax=g("pBmax"),prix=g("pPrix");
+  const a=aggregate(S.sel,S.win);const best=bestYear();
+  if(cible==null||act==null||cpl==null){el.innerHTML='<div class="msg warn">'+T("Remplis la cible, les membres actifs et le coût par lead.","Fill in the target, active members and cost per lead.")+'</div>';return}
+  const moyBase=(act+cible)/2;const besoin=Math.max(0,(cible-act)/ech)+moyBase*ch;
+  const sc=[{n:T("Entonnoir actuel","Current funnel"),c:a&&a.rGlobal},{n:T("Au niveau franchise","At franchise level"),c:a&&a.fr.overall},{n:T("Meilleure année","Best year")+(best?" ("+best.y+")":""),c:best&&best.a.rGlobal}];
+  let h=`<div class="out" style="margin-bottom:12px"><div><span>${T("Ventes requises / mois","Sales needed / month")}</span><b>${fmt1(besoin)}</b></div><div><span>${T("Dont remplacement des départs","Of which replacing departures")}</span><b>${fmt1(moyBase*ch)}</b></div><div><span>${T("Revenu récurrent visé","Target recurring revenue")}</span><b>${prix?money(cible*prix):"—"}</b></div></div>`;
+  h+=`<div class="tablewrap"><table><thead><tr><th>${T("Scénario","Scenario")}</th><th>Conversion</th><th>${T("Leads / mois","Leads / month")}</th><th>${T("Budget / mois","Budget / month")}</th><th>Verdict</th></tr></thead><tbody>`;
+  sc.forEach(s=>{if(!s.c){h+=`<tr><td>${s.n}</td><td colspan="4" class="flat">—</td></tr>`;return}
+    const leads=besoin/s.c,bud=leads*cpl;const st=bud<=bmax?(bud<=bmin?"ok":"warn"):"bad";
+    h+=`<tr><td>${s.n}</td><td>${pct(s.c)}</td><td>${fmt0(Math.ceil(leads))}</td><td><b>${money(bud)}</b></td><td><span class="chip ${st}">${st==="ok"?T("Sous le min.","Below min."):st==="warn"?T("Dans l'enveloppe","Within budget"):T("Hors enveloppe","Over budget")}</span></td></tr>`});
+  h+='</tbody></table></div><p class="note" style="margin-top:8px">'+T("L'écart entre la ligne « actuel » et la ligne « franchise » est le budget que la correction de l'entonnoir économise chaque mois.","The gap between the “current” and “franchise” rows is the budget that fixing the funnel saves every month.")+'</p>';
+  el.innerHTML=h;
+}
+
+function barChart(vals,labels,o={}){
+  const W=640,H=o.h||220,P={l:44,r:14,t:16,b:30};
+  const okv=vals.filter(ok);if(!okv.length)return '<div class="empty">'+T("Pas encore de données pour ce graphique.","No data for this chart yet.")+'</div>';
+  const nice=niceTicks(0,Math.max(...okv,o.ref||0)*1.05,4);const max=nice[nice.length-1];
+  const ys=v=>P.t+(1-v/max)*(H-P.t-P.b);const bw=(W-P.l-P.r)/vals.length;
+  let g="";nice.forEach(t=>{g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${ys(t)}" y2="${ys(t)}" stroke="var(--line)"/><text x="${P.l-8}" y="${ys(t)+4}" text-anchor="end" font-size="11" fill="var(--muted)">${(o.fmt||fmt1)(t)}</text>`});
+  vals.forEach((v,i)=>{const x=P.l+i*bw+bw*0.18,w=bw*0.64;
+    if(ok(v)){const hi=o.ref!=null&&v>=o.ref;g+=`<rect x="${x}" y="${ys(v)}" width="${w}" height="${ys(0)-ys(v)}" rx="3" fill="${hi?"var(--accent)":"var(--bench)"}" ${hi?"":'opacity="0.55"'}><title>${labels[i]} : ${(o.fmt||fmt1)(v)}</title></rect>`}
+    g+=`<text x="${x+w/2}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--muted)">${labels[i]}</text>`});
+  if(o.ref!=null)g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${ys(o.ref)}" y2="${ys(o.ref)}" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.label||"")}">${g}</svg></div><div class="legend"><span><i style="background:var(--accent)"></i>${T("Au-dessus de la moyenne","Above average")}</span><span><i style="background:var(--bench);opacity:.55"></i>${T("Sous la moyenne","Below average")}</span>${o.refLabel?`<span><i style="background:repeating-linear-gradient(90deg,var(--ink) 0 4px,transparent 4px 7px)"></i>${o.refLabel}</span>`:""}</div>`;
+}
+function renderSaison(){
+  const ys=[...new Set(keys().map(k=>k.slice(0,4)))].sort();
+  if(!ys.length)return noData();
+  const M=[["leads","Leads",num,num],["rGlobal",T("Conversion globale","Overall conversion"),pct,pctAxis],["newActive",T("Nouveaux membres","New members"),num,num],["cpl",T("Coût par lead","Cost per lead"),money2,moneyAxis],["cac","CAC",money,moneyAxis],["churn",T("Annulations","Cancellations"),pct,pctAxis]];
+  const c=S.heat||"leads";const m=M.find(x=>x[0]===c);const inv=["cpl","cac","churn"].includes(c);
+  const mk=(y,i)=>y+"-"+String(i+1).padStart(2,"0");
+  const avgBy=f=>MOIS().map((_,i)=>{const v=ys.map(y=>aggregate(mk(y,i),1)).filter(Boolean).map(a=>a[f]).filter(ok);return v.length?v.reduce((x,y)=>x+y,0)/v.length:null});
+  const lv=avgBy("leads"),cv=avgBy("rGlobal"),nv=avgBy("newActive");const okv=lv.filter(x=>x!=null);const mean=okv.length?okv.reduce((x,y)=>x+y,0)/okv.length:null;const idx=lv.map(v=>v==null||!mean?null:v/mean);
+  /* 1. Indice */
+  let h=`<section class="panel"><h2>${T("Indice saisonnier","Seasonal index")}</h2><p class="sub">${T("Leads moyens du mois ÷ moyenne annuelle, toutes années confondues. Au-dessus de 1,0 : mois naturellement fort, où chaque dollar rapporte plus.","Average leads for the month ÷ annual average, all years combined. Above 1.0: a naturally strong month, where each dollar returns more.")}</p><div class="tablewrap"><table><thead><tr><th>${T("Mois","Month")}</th>${MOIS().map(x=>"<th>"+x+"</th>").join("")}</tr></thead><tbody>
+  <tr><td><b>${T("Indice leads","Lead index")}</b></td>${idx.map(v=>`<td class="${v==null?"flat":v>=1.1?"up":v<=0.9?"down":""}"><b>${v==null?"—":fmt1(v)}</b></td>`).join("")}</tr>
+  <tr><td>${T("Leads moy.","Avg. leads")}</td>${lv.map(v=>"<td>"+(v==null?"—":fmt1(v))+"</td>").join("")}</tr>
+  <tr><td>${T("Nouveaux membres moy.","Avg. new members")}</td>${nv.map(v=>"<td>"+(v==null?"—":fmt1(v))+"</td>").join("")}</tr>
+  <tr><td>${T("Conversion moy.","Avg. conversion")}</td>${cv.map(v=>"<td>"+pct(v)+"</td>").join("")}</tr></tbody></table></div></section>`;
+  /* sélecteur commun */
+  h+=`<div class="selrow noprint"><label for="heatSel">${T("Indicateur des graphiques et de la carte","Metric for charts and map")}</label><select id="heatSel">${M.map(x=>`<option value="${x[0]}" ${x[0]===c?"selected":""}>${x[1]}</option>`).join("")}</select></div>
+  <p class="note printonly" style="display:none;margin:0">${T("Indicateur : ","Metric: ")}<b>${m[1]}</b></p>`;
+  /* 2. Graphiques */
+  const yrs=ys.slice(-4);const pal=["var(--accent)","var(--ink)","var(--steel)","var(--bench)"],dash=[null,null,"6 4","2 4"];
+  const series=yrs.slice().reverse().map((y,j)=>({name:y,values:MOIS().map((_,i)=>{const a=aggregate(mk(y,i),1);return a?a[c]:null}),color:pal[j],dash:dash[j],w:j===0?3:2})).reverse();
+  h+=`<div class="grid2"><section class="panel"><h2>${T("Courbes annuelles","Year-over-year curves")} · ${m[1]}</h2><p class="sub">${T("Une courbe par année, de janvier à décembre. Les écarts entre les courbes montrent si un mois faible l'est chaque année ou seulement une fois.","One curve per year, January to December. Gaps between curves show whether a weak month is weak every year or only once.")}</p>${lineChart(series,MOIS(),{xl:MOIS(),fmt:m[3],h:240,label:m[1]})}</section>
+  <section class="panel"><h2>${T("Mois forts et mois faibles","Strong and weak months")}</h2><p class="sub">${T("Indice leads par mois. Les barres bleues dépassent la moyenne annuelle : c'est là que le budget publicitaire travaille le mieux.","Lead index by month. Blue bars are above the annual average: that's where ad budget works hardest.")}</p>${barChart(idx,MOIS(),{ref:1,refLabel:T("moyenne = 1,0","average = 1.0"),h:240,label:T("Indice leads","Lead index")})}</section></div>`;
+  /* 3. Carte */
+  const vals=[];ys.forEach(y=>{for(let i=0;i<12;i++){const a=aggregate(mk(y,i),1);if(a&&ok(a[c]))vals.push(a[c])}});
+  const mn=Math.min(...vals),mx=Math.max(...vals);
+  h+=`<section class="panel"><h2>${T("Carte saisonnière","Seasonal map")} · ${m[1]}</h2><p class="sub">${T("Un mois par case. Plus la case est foncée, meilleure est la performance. Sert à décider quand concentrer le budget (rentrée, janvier, printemps) et quand le réduire.","One month per cell. The darker the cell, the better the performance. Use it to decide when to concentrate budget (back-to-school, January, spring) and when to cut it.")}</p>
+  <div class="tablewrap"><div class="heat" style="grid-template-columns:60px repeat(12,minmax(0,1fr))"><div></div>${MOIS().map(x=>`<div class="h">${x}</div>`).join("")}`;
+  ys.forEach(y=>{h+=`<div class="y">${y}</div>`;for(let i=0;i<12;i++){const k=mk(y,i);const a=aggregate(k,1);const v=a?a[c]:null;
+    if(!ok(v)){h+=`<div class="c" style="background:var(--surface-2);color:var(--muted)">·</div>`;continue}
+    let t=mx===mn?.6:(v-mn)/(mx-mn);if(inv)t=1-t;const op=0.12+t*0.78;
+    h+=`<div class="c" style="background:color-mix(in srgb,var(--accent) ${Math.round(op*100)}%,var(--surface));color:${op>0.55?"var(--heat-ink)":"var(--ink)"}" title="${fmtM(k)}">${m[2](v)}</div>`}});
+  h+='</div></div></section>';
+  return h;
+}
+
+const FIELDS=()=>[["leads","Leads (Total Leads)"],["booked",T("Essais réservés","Booked trials")],["schedBook",T("Essais planifiés","Scheduled trials")],["schedCame",T("Venues planifiées","Scheduled show-ups")],["came",T("Venues totales (Total Camein)","Total show-ups (Total Camein)")],["newActive",T("Nouveaux membres (Total Active)","New members (Total Active)")],["expiredPrev",T("Expirés mois précédent","Expired previous month")],["activePrev",T("Actifs mois précédent","Active previous month")],["ltv",T("Valeur à vie projetée ($)","Projected lifetime value ($)")],["impressions","Impressions"],["initRev",T("Revenu initial estimé ($)","Estimated initial revenue ($)")],["spend",T("Dépense Power Leads ($)","Power Leads spend ($)")],["prepaid",T("Montant prépayé ($)","Prepaid amount ($)")],["credit",T("Crédit antérieur ($)","Previous credit ($)")],["autres",T("Autres dépenses marketing ($)","Other marketing spend ($)")],["checkin",T("Activité check-in studio","Studio check-in activity")],["checkinFr",T("Check-in moy. franchise","Franchise avg. check-in")]];
+const FRF=()=>[["booked",T("Franchise : réservation %","Franchise: booking %")],["completed",T("Franchise : présence %","Franchise: show-up %")],["sales",T("Franchise : closing %","Franchise: close %")],["overall",T("Franchise : conversion %","Franchise: conversion %")],["churn",T("Franchise : annulations %","Franchise: cancellations %")]];
+function renderDonnees(){
+  let h=`<section class="panel"><h2>${T("Importer des rapports","Import reports")}</h2><p class="sub">${T("Copie la page « Franchise Stats » de Member Manager et colle-la ici. Tu peux coller plusieurs mois d'un coup : chaque bloc est repéré par sa date (AAAA-MM). Un mois déjà présent est remplacé, sauf ses autres dépenses et ses notes.","Copy the “Franchise Stats” page from Member Manager and paste it here. You can paste several months at once: each block is detected by its date (YYYY-MM). A month already saved is replaced, except its other spend and notes.")}</p>
+  <textarea id="paste" placeholder="Stats&#10;Franchise Stats&#10;2025-11&#10;Current Month Statistics Average (All HITS)…"></textarea>
+  <div class="row" style="margin-top:10px"><button class="btn primary" id="btnParse">${T("Analyser le texte","Read the text")}</button><span class="note">${T("Rien n'est enregistré avant la confirmation.","Nothing is saved until you confirm.")}</span></div>
+  <div id="parseOut" style="margin-top:12px"></div></section>`;
+  h+=`<section class="panel"><h2>${T("Sauvegarde","Backup")}</h2><p class="sub">${T("Les données restent dans ce navigateur, sur cet ordinateur. Exporte une sauvegarde après chaque import mensuel, et utilise-la pour transférer l'outil sur un autre poste ou à Dyne.","Data stays in this browser, on this computer. Export a backup after each monthly import, and use it to move the tool to another computer or share it with Dyne.")}</p>
+  <div class="row"><button class="btn" id="btnExpJson">${T("Exporter la sauvegarde (.json)","Export backup (.json)")}</button><button class="btn" id="btnImpJson">${T("Importer une sauvegarde","Import a backup")}</button><input type="file" id="fileJson" accept=".json,application/json" hidden><button class="btn" id="btnExpCsv">${T("Exporter pour Excel (.csv)","Export for Excel (.csv)")}</button><button class="btn" id="btnNewMonth">${T("Ajouter un mois manuellement","Add a month manually")}</button></div><div id="bkMsg" style="margin-top:8px"></div></section>`;
+  h+=`<section class="panel" id="editPanel" ${S.editing?"":"hidden"}></section>`;
+  const ks=keys().reverse();
+  h+=`<section class="panel"><h2>${T("Mois enregistrés","Saved months")} <span class="note" style="font-family:var(--body);text-transform:none;letter-spacing:0">(${ks.length} ${T("sur 36 visés","of 36 targeted")})</span></h2><div class="row" style="margin:0 0 12px"><button class="btn danger" id="btnDelSel" ${S.selDel.size?"":"disabled"}>${T("Supprimer la sélection","Delete selected")} (${S.selDel.size})</button><button class="btn danger" id="btnDelAll" ${ks.length?"":"disabled"}>${T("Effacer toutes les données","Erase all data")}</button><span class="note">${T("Conseil : exporte une sauvegarde avant de supprimer. La suppression est définitive dans ce navigateur.","Tip: export a backup before deleting. Deletion is permanent in this browser.")}</span></div><div id="delMsg"></div><p class="sub">${T("Coche des mois pour les supprimer, ou clique une ligne pour corriger un chiffre, ajouter les autres dépenses marketing (imprimé, événements, commandites) ou une note de campagne.","Tick months to delete them, or click a row to fix a figure, add other marketing spend (print, events, sponsorships) or a campaign note.")}</p>
+  ${ks.length?`<div class="tablewrap"><table><thead><tr><th class="ck"><input type="checkbox" class="chk" id="chkAll" aria-label="${T("Tout sélectionner","Select all")}"></th><th>${T("Mois","Month")}</th><th>Leads</th><th>${T("Réserv.","Booking")}</th><th>${T("Présence","Show-up")}</th><th>Closing</th><th>Conv.</th><th>${T("Nouv.","New")}</th><th>${T("Dépense","Spend")}</th><th>CAC</th><th>Note</th></tr></thead><tbody>${ks.map(k=>{const a=aggregate(k,1);return `<tr class="click" data-k="${k}" tabindex="0"><td class="ck"><input type="checkbox" class="chk rowchk" data-k="${k}" aria-label="${fmtM(k)}" ${S.selDel.has(k)?"checked":""}></td><td><b>${fmtM(k)}</b></td><td>${num(a.leads)}</td><td>${pct(a.rBook)}</td><td>${pct(a.rShow)}</td><td>${pct(a.rClose)}</td><td>${pct(a.rGlobal)}</td><td>${num(a.newActive)}</td><td>${money(a.dep)}</td><td>${money(a.cac)}</td><td style="text-align:left;max-width:220px;overflow:hidden;text-overflow:ellipsis">${esc(S.months[k].notes||"")}</td></tr>`}).join("")}</tbody></table></div>`:`<div class="empty">${T("Aucun mois enregistré. Colle un premier rapport ci-dessus.","No months saved. Paste a first report above.")}</div>`}</section>`;
+  return h;
+}
+function editHTML(k,isNew){
+  const d=S.months[k]||{mois:k,fr:{}};const fr=d.fr||{};
+  return `${isNew?`<label for="e_mois" class="note">${T("Mois","Month")} (${T("AAAA-MM","YYYY-MM")}) <input id="e_mois" type="month" value="${k}"></label>`:""}<h2>${S.months[k]?T("Modifier","Edit"):T("Ajouter","Add")} · ${fmtM(k)}</h2><p class="sub">${T("Les taux franchise sont en pourcentage, tels qu'affichés dans le rapport.","Franchise rates are in percent, as shown in the report.")}</p>
+  <div class="form">${FIELDS().map(([f,l])=>`<label for="e_${f}">${l}<input id="e_${f}" type="number" step="any" value="${d[f]??""}"></label>`).join("")}
+  ${FRF().map(([f,l])=>`<label for="ef_${f}">${l}<input id="ef_${f}" type="number" step="any" value="${fr[f]!=null?(fr[f]*100).toFixed(1):""}"></label>`).join("")}
+  <label for="e_notes" style="grid-column:1/-1">${T("Notes de campagne (offre, événement, changement de ciblage)","Campaign notes (offer, event, targeting change)")}<input id="e_notes" type="text" value="${esc(d.notes||"")}"></label></div>
+  <div class="row" style="margin-top:12px"><button class="btn primary" id="btnSaveEdit">${T("Enregistrer","Save")}</button><button class="btn" id="btnCancelEdit">${T("Fermer","Close")}</button><span style="flex:1"></span><button class="btn danger" id="btnDel" ${S.months[k]?"":"disabled"}>${T("Supprimer ce mois","Delete this month")}</button></div><div id="editMsg" style="margin-top:8px"></div>`;
+}
+
+function renderMethode(){
+  const it=S.lang==="en"?[
+    ["Booking rate","Booked trials ÷ leads. Measures speed and quality of first contact (call or text within 5 minutes)."],
+    ["Show-up rate","Scheduled show-ups ÷ scheduled trials. Measures reminders and day-before confirmation."],
+    ["Close rate","New members ÷ total show-ups. Measures the trial experience and package presentation. Can exceed 100% when sales come from trials in earlier months."],
+    ["Overall conversion","New members ÷ leads. The metric that links advertising to sales."],
+    ["Cost per lead (CPL)","(Power Leads spend + other marketing spend) ÷ leads."],
+    ["Leads per 1,000 impressions","Leads ÷ impressions × 1,000. Quality of the audience purchased."],
+    ["Acquisition cost (CAC)","Total marketing spend ÷ new members."],
+    ["Lifetime value per member","Projected lifetime value from the report ÷ new members for the month."],
+    ["Value-to-cost ratio","Lifetime value per member ÷ CAC. Below 3:1, spend does not pay back fast enough. At 5:1 and above, you can accelerate."],
+    ["Cancellations","Expired previous month ÷ active previous month."],
+    ["Missed members","For each stage below franchise: new members × (franchise rate ÷ studio rate − 1). Estimates the gain with no extra spend."],
+    ["Window","Counts are summed over the window (1, 3 or 12 months), then rates are recalculated. This avoids averaging percentages computed on small numbers."],
+    ["Budget decision","Accelerate: ratio ≥ 5:1 and no stage more than 5 pt below franchise. Hold and fix: ratio ≥ 3:1. Cut and reallocate: ratio < 3:1."],
+    ["Simulator","Sales needed per month = (target − active) ÷ timeline + average active × cancellation rate. Leads = sales ÷ conversion. Budget = leads × CPL."]
+  ]:[
+    ["Taux de réservation","Essais réservés ÷ leads. Mesure la vitesse et la qualité du premier contact (appel, texto dans les 5 minutes)."],
+    ["Taux de présence","Venues planifiées ÷ essais planifiés. Mesure les rappels et la confirmation la veille."],
+    ["Taux de closing","Nouveaux membres ÷ venues totales. Mesure l'expérience d'essai et la présentation des forfaits. Peut dépasser 100 % quand des ventes viennent d'essais des mois précédents."],
+    ["Conversion globale","Nouveaux membres ÷ leads. L'indicateur qui relie la publicité aux ventes."],
+    ["Coût par lead (CPL)","(Dépense Power Leads + autres dépenses marketing) ÷ leads."],
+    ["Leads par 1 000 impressions","Leads ÷ impressions × 1 000. Qualité de l'audience achetée."],
+    ["Coût d'acquisition (CAC)","Dépense marketing totale ÷ nouveaux membres."],
+    ["Valeur à vie par membre","Valeur à vie projetée du rapport ÷ nouveaux membres du mois."],
+    ["Ratio valeur : coût","Valeur à vie par membre ÷ CAC. Moins de 3 : 1, la dépense ne se paie pas assez vite. 5 : 1 et plus, on peut accélérer."],
+    ["Annulations","Expirés du mois précédent ÷ actifs du mois précédent."],
+    ["Membres manqués","Pour chaque étape sous la franchise : nouveaux membres × (taux franchise ÷ taux studio − 1). Estime le gain sans dépense additionnelle."],
+    ["Fenêtre","Les comptes sont additionnés sur la fenêtre (1, 3 ou 12 mois), puis les taux sont recalculés. On évite ainsi de faire la moyenne de pourcentages calculés sur de petits nombres."],
+    ["Décision budget","Accélérer : ratio ≥ 5 : 1 et aucune étape à plus de 5 pt sous la franchise. Maintenir et corriger : ratio ≥ 3 : 1. Réduire et réallouer : ratio < 3 : 1."],
+    ["Simulateur","Ventes requises par mois = (cible − actifs) ÷ échéance + actifs moyens × taux d'annulation. Leads = ventes ÷ conversion. Budget = leads × CPL."]
+  ];
+  const lim=S.lang==="en"?[
+    "Average membership length shows the same value (1 year 3 months 13 days) on several reports: it appears frozen in Member Manager and is not used in calculations.",
+    "“Total Camein” (total show-ups) and “Scheduled Camein” (scheduled show-ups) differ: show-up rate uses scheduled, close rate uses total, as in the franchise report.",
+    "Months before May 2026 reflect the previous owners' management. Useful for seasonality; interpret with care when judging current execution.",
+    "Power Leads spend does not cover other channels. Without entering other spend, CAC is understated."
+  ]:[
+    "La durée moyenne d'abonnement affiche la même valeur (1 an 3 mois 13 jours) sur plusieurs rapports : elle semble figée dans Member Manager et n'est pas utilisée dans les calculs.",
+    "« Total Camein » (venues totales) et « Scheduled Camein » (venues planifiées) diffèrent : la présence utilise les planifiées, le closing utilise les totales, comme le rapport de la franchise.",
+    "Les mois antérieurs à mai 2026 reflètent la gestion des anciens propriétaires. Utile pour la saisonnalité, à interpréter avec prudence pour juger l'exécution actuelle.",
+    "La dépense Power Leads ne couvre pas les autres canaux. Sans saisie des autres dépenses, le CAC est sous-estimé."
+  ];
+  return `<section class="panel method"><h2>${T("Mécanique de calcul","How it's calculated")}</h2><p class="sub">${T("Toutes les formules utilisées par l'outil. Les données brutes viennent du rapport Franchise Stats de Member Manager ; les autres dépenses marketing et les notes sont ajoutées à la main.","Every formula the tool uses. Raw data comes from the Member Manager Franchise Stats report; other marketing spend and notes are entered by hand.")}</p><dl>${it.map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join("")}</dl></section>
+  <section class="panel"><h2>${T("Limites connues des données","Known data limitations")}</h2><ul class="reasons">${lim.map(x=>"<li>"+esc(x)+"</li>").join("")}</ul></section>`;
+}
+
+/* ---------- parseur ---------- */
+function toN(s){if(s==null)return null;const v=parseFloat(String(s).replace(/[,\s$ −]/g,m=>m==="−"?"-":""));return isFinite(v)?v:null}
+function parseReports(txt){
+  const re=/\b(20\d\d)-(0[1-9]|1[0-2])\b/g;const hits=[];let m;
+  while((m=re.exec(txt)))hits.push({k:m[1]+"-"+m[2],i:m.index});
+  const out=[];
+  hits.forEach((h,j)=>{
+    const b=txt.slice(h.i,j+1<hits.length?hits[j+1].i:txt.length);
+    const g=r=>{const x=b.match(r);return x?toN(x[1]):null};
+    if(g(/Total Leads:\s*([\d,]+)/)==null)return;
+    const d={mois:h.k,fr:{}};
+    d.leads=g(/Total Leads:\s*([\d,]+)/);d.booked=g(/Booked Trials:\s*([\d,]+)/);
+    d.schedCame=g(/Scheduled Camein:\s*([\d,]+)/);d.schedBook=g(/Scheduled Bookings:\s*([\d,]+)/);
+    d.newActive=g(/Total Active:\s*([\d,]+)/);d.came=g(/Total Camein:\s*([\d,]+)/);
+    d.expiredPrev=g(/Total Expired \(Last Month\):\s*([\d,]+)/);d.activePrev=g(/Total Active \(Last Month\):\s*([\d,]+)/);
+    const fa=b.match(/Average[\s\S]*?([\d.]+)\s*%\s+([\d.]+)\s*%\s+([\d.]+)\s*%\s+([\d.]+)\s*%\s+([\d.]+)\s*%/);
+    if(fa){["booked","completed","sales","overall","churn"].forEach((f,i)=>d.fr[f]=toN(fa[i+1])/100)}
+    const N="(-?\\s*[\\d,.]+|-|N\\/A)";
+    const pl=b.match(new RegExp("\\$\\s*"+N+"\\s+"+N+"\\s+\\$\\s*"+N+"\\s+\\$\\s*"+N+"\\s*\\/\\s*"+N+"\\s*\\/\\s*"+N));
+    if(pl){d.ltv=toN(pl[1]);d.impressions=toN(pl[2]);d.initRev=toN(pl[3]);d.spend=toN(pl[4]);d.prepaid=toN(pl[5]);d.credit=toN(pl[6])}
+    const ln=b.match(/(\d+)\s*Year\/s\s*(\d+)\s*Month\/s\s*(\d+)\s*Day\/s\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/);
+    if(ln){d.dureeMoy=ln[1]+" an "+ln[2]+" mois "+ln[3]+" j";d.checkin=toN(ln[4]);d.checkinFr=toN(ln[5]);d.checkinMax=toN(ln[6])}
+    const miss=["leads","booked","schedBook","schedCame","came","newActive","expiredPrev","activePrev","spend","impressions","ltv"].filter(f=>d[f]==null);
+    out.push({d,miss});
+  });
+  return out;
+}
+
+/* ---------- persistance (navigateur) ---------- */
+const LS="30mh-acquisition-v1";
+function persist(){try{localStorage.setItem(LS,JSON.stringify({months:S.months,params:S.params,savedAt:new Date().toISOString()}));return true}catch(_){return false}}
+const SEED={
+"2023-11":{mois:"2023-11",leads:72,booked:31,schedBook:40,schedCame:27,came:14,newActive:14,expiredPrev:20,activePrev:147,ltv:14756,impressions:54255,initRev:2493,spend:996,prepaid:1000,credit:11.93,autres:0,checkin:5.28,checkinFr:7.16,checkinMax:91.17,dureeMoy:"1 an 3 mois 13 j",fr:{booked:.396,completed:.539,sales:.45,overall:.152,churn:.087},notes:""},
+"2024-11":{mois:"2024-11",leads:71,booked:30,schedBook:28,schedCame:20,came:14,newActive:16,expiredPrev:19,activePrev:144,ltv:19812,impressions:53979,initRev:3635,spend:987,prepaid:1000,credit:20.14,autres:0,checkin:5.77,checkinFr:4.85,checkinMax:20.19,dureeMoy:"1 an 3 mois 13 j",fr:{booked:.349,completed:.53,sales:.456,overall:.118,churn:.084},notes:""},
+"2025-11":{mois:"2025-11",leads:64,booked:13,schedBook:19,schedCame:10,came:12,newActive:5,expiredPrev:12,activePrev:148,ltv:5961,impressions:115541,initRev:706,spend:1380,prepaid:1400,credit:21.08,autres:0,checkin:4.5,checkinFr:4.47,checkinMax:13.79,dureeMoy:"1 an 3 mois 13 j",fr:{booked:.328,completed:.465,sales:.462,overall:.113,churn:.081},notes:""}};
+function downloadFile(name,text,type){const b=new Blob([text],{type});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}
+function exportCSV(){const cols=["mois","leads","booked","schedBook","schedCame","came","newActive","expiredPrev","activePrev","ltv","impressions","initRev","spend","autres","prepaid","credit","checkin","checkinFr"];
+  const fc=["booked","completed","sales","overall","churn"];
+  const head=cols.concat(fc.map(f=>"fr_"+f),["tx_reservation","tx_presence","tx_closing","conv_globale","annulations","cpl","cac","valeur_cout","notes"]);
+  const r4=v=>ok(v)?(+v).toFixed(4):"";
+  const lines=[head.join(";")].concat(keys().map(k=>{const d=S.months[k],a=aggregate(k,1);return cols.map(c=>d[c]??"").concat(fc.map(f=>d.fr&&d.fr[f]!=null?d.fr[f]:""),[r4(a.rBook),r4(a.rShow),r4(a.rClose),r4(a.rGlobal),r4(a.churn),r4(a.cpl),r4(a.cac),r4(a.ltvcac),'"'+String(d.notes||"").replace(/"/g,'""')+'"']).join(";")}));
+  downloadFile("30MH-acquisition-"+new Date().toISOString().slice(0,10)+".csv","﻿"+lines.join("\n"),"text/csv;charset=utf-8")}
+
+/* ---------- textes fixes du bandeau ---------- */
+function applyChrome(){
+  document.documentElement.lang=S.lang==="en"?"en-CA":"fr-CA";
+  const t=T("Centre d'acquisition","Acquisition Center");document.getElementById("appTitle").textContent=t;document.title=t+" 30MH";
+  document.getElementById("lblMonth").textContent=T("Mois analysé","Month analyzed");
+  document.getElementById("lblWin").textContent=T("Fenêtre","Window");
+  const bp=document.getElementById("btnPrint");bp.textContent=T("Imprimer / PDF","Print / PDF");
+  bp.title=T("Ouvre la fenêtre d'impression ; choisis « Enregistrer en PDF » comme imprimante","Opens the print dialog; choose “Save as PDF” as the printer");
+  const wl={1:T("Mois","Month"),3:T("3 mois","3 months"),12:T("12 mois","12 months"),c:T("Personnalisée","Custom")};
+  document.querySelectorAll("#segWin button").forEach(b=>{b.textContent=wl[b.dataset.w];b.setAttribute("aria-pressed",b.dataset.w==="c"?S.custom:(!S.custom&&+b.dataset.w===S.win))});
+  document.getElementById("lblFrom").textContent=T("De","From");document.getElementById("lblTo").textContent=T("À","To");
+  document.getElementById("segWin").setAttribute("aria-label",T("Fenêtre d'analyse","Analysis window"));
+  const tl={bord:T("Tableau de bord","Dashboard"),entonnoir:T("Entonnoir","Funnel"),budget:T("Budget & acquisition","Budget & acquisition"),saison:T("Saisonnalité","Seasonality"),donnees:T("Données","Data"),methode:T("Méthode","Method")};
+  document.querySelectorAll("#tabs button").forEach(b=>{b.textContent=tl[b.dataset.t];b.setAttribute("aria-selected",b.dataset.t===S.tab)});
+  document.querySelectorAll("#segLang button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===S.lang));
+}
+
+/* ---------- liaison ---------- */
+function render(){
+  applyChrome();
+  const ks=keys();const sel=document.getElementById("selMonth");
+  if(ks.length){const first=ks[0],last=ks[ks.length-1];
+    if(!S.sel||!(S.sel>=first&&S.sel<=last))S.sel=last;
+    if(S.custom){
+      if(!S.from||S.from<first||S.from>last)S.from=first;
+      if(!S.to||S.to<first||S.to>last)S.to=last;
+      if(S.from>S.to){const x=S.from;S.from=S.to;S.to=x}
+      S.sel=S.to;S.win=monthsBetween(S.from,S.to);
+    }
+    const all=[];let k=last;while(true){all.push(k);if(k===first)break;k=keyAdd(k,-1)}
+    const opts=v=>all.map(k=>`<option value="${k}" ${k===v?"selected":""}>${fmtM(k)}${S.months[k]?"":T(" (vide)"," (empty)")}</option>`).join("");
+    sel.innerHTML=opts(S.sel);
+    document.getElementById("selFrom").innerHTML=opts(S.from);document.getElementById("selTo").innerHTML=opts(S.to)}
+  else sel.innerHTML='<option>—</option>';
+  document.getElementById("wrapMonth").hidden=S.custom;document.getElementById("wrapCustom").hidden=!S.custom;
+  if(!ks.length&&S.tab!=="donnees"&&S.tab!=="methode"){
+    V.innerHTML=`<section class="panel"><div class="empty">${T("Aucun mois enregistré pour l'instant. Va dans l'onglet <b>Données</b> et colle un rapport Franchise Stats pour commencer.","No months saved yet. Go to the <b>Data</b> tab and paste a Franchise Stats report to start.")}</div></section>`;return}
+  V.innerHTML=({bord:renderBord,entonnoir:renderEntonnoir,budget:renderBudget,saison:renderSaison,donnees:renderDonnees,methode:renderMethode})[S.tab]();
+  if(S.tab==="budget")runSim();
+  if(S.tab==="donnees"){if(S.editing){const p=document.getElementById("editPanel");p.innerHTML=editHTML(S.editing,S.editingNew);p.hidden=false}if(S.parsed)showParsed()}
+}
+const MISSLBL=()=>({leads:"leads",booked:T("essais réservés","booked trials"),schedBook:T("essais planifiés","scheduled trials"),schedCame:T("venues planifiées","scheduled show-ups"),came:T("venues","show-ups"),newActive:T("nouveaux membres","new members"),expiredPrev:T("expirés","expired"),activePrev:T("actifs mois préc.","active prev. month"),spend:T("dépense","spend"),impressions:"impressions",ltv:T("valeur à vie","lifetime value")});
+function showParsed(){
+  const o=document.getElementById("parseOut");if(!o)return;const P=S.parsed;const ML=MISSLBL();
+  if(!P.length){o.innerHTML='<div class="msg bad">'+T("Aucun rapport reconnu. Vérifie que le texte contient la date (ex. 2025-11) et la ligne « Total Leads: ».","No report recognized. Check that the text contains the date (e.g. 2025-11) and the “Total Leads:” line.")+'</div>';return}
+  o.innerHTML=`<div class="tablewrap"><table><thead><tr><th>${T("Mois","Month")}</th><th>Leads</th><th>${T("Réserv.","Booking")}</th><th>${T("Venues","Show-ups")}</th><th>${T("Nouv.","New")}</th><th>${T("Dépense","Spend")}</th><th>Impr.</th><th>${T("Crédit","Credit")}</th><th>${T("État","Status")}</th></tr></thead><tbody>${P.map(({d,miss})=>`<tr><td><b>${fmtM(d.mois)}</b>${S.months[d.mois]?' <span class="tag">'+T("remplace","replaces")+'</span>':""}</td><td>${num(d.leads)}</td><td>${num(d.booked)}</td><td>${num(d.came)}</td><td>${num(d.newActive)}</td><td>${money(d.spend)}</td><td>${num(d.impressions)}</td><td>${d.credit==null?"—":money2(d.credit)}</td><td style="white-space:normal;text-align:left">${miss.length?'<span class="chip warn">'+T("À compléter : ","Missing: ")+miss.map(f=>ML[f]||f).join(", ")+'</span>':'<span class="chip ok">'+T("Complet","Complete")+'</span>'}</td></tr>`).join("")}</tbody></table></div>
+  <div class="row" style="margin-top:10px"><button class="btn primary" id="btnCommit">${T("Enregistrer "+P.length+" mois","Save "+P.length+" month(s)")}</button><button class="btn" id="btnDiscard">${T("Annuler","Cancel")}</button></div><div id="commitMsg" style="margin-top:8px"></div>`;
+}
+document.getElementById("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;S.tab=b.dataset.t;try{localStorage.setItem("acq-tab",S.tab)}catch(_){}render()});
+function monthsBetween(a,b){const [y1,m1]=a.split("-").map(Number),[y2,m2]=b.split("-").map(Number);return (y2-y1)*12+(m2-m1)+1}
+document.getElementById("segWin").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.w==="c"){if(!S.custom){S.custom=true;S.to=S.sel;S.from=S.sel?keyAdd(S.sel,-(S.win-1)):null}}
+  else{if(S.custom){S.custom=false;S.sel=S.to}S.win=+b.dataset.w}
+  try{localStorage.setItem("acq-period",JSON.stringify({win:S.win,custom:S.custom,from:S.from,to:S.to}))}catch(_){}
+  render()});
+["selFrom","selTo"].forEach(id=>document.getElementById(id).addEventListener("change",e=>{if(id==="selFrom")S.from=e.target.value;else S.to=e.target.value;
+  try{localStorage.setItem("acq-period",JSON.stringify({win:S.win,custom:S.custom,from:S.from,to:S.to}))}catch(_){}
+  render()}));
+document.getElementById("segLang").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  const draft=document.getElementById("paste");const keep=draft?draft.value:"";
+  S.lang=b.dataset.l;try{localStorage.setItem("acq-lang",S.lang)}catch(_){}render();
+  const d2=document.getElementById("paste");if(d2&&keep)d2.value=keep});
+document.getElementById("selMonth").addEventListener("change",e=>{S.sel=e.target.value;render()});
+V.addEventListener("input",e=>{if(e.target.closest(".sim"))runSim()});
+V.addEventListener("keydown",e=>{if(e.key==="Enter"){const tr=e.target.closest("tr.click");if(tr&&e.target===tr)tr.click()}});
+V.addEventListener("click",async e=>{
+  const t=e.target;
+  if(t.classList&&t.classList.contains("chk")){
+    if(t.id==="chkAll"){S.selDel=t.checked?new Set(keys()):new Set()}else{t.checked?S.selDel.add(t.dataset.k):S.selDel.delete(t.dataset.k)}
+    render();return}
+  if(t.id==="btnDelSel"||t.id==="btnDelAll"){
+    const list=t.id==="btnDelAll"?keys():[...S.selDel];if(!list.length)return;
+    if(t.dataset.confirm!=="1"){t.dataset.confirm="1";t.textContent=T("Confirmer : supprimer "+list.length+" mois","Confirm: delete "+list.length+" month(s)");
+      document.getElementById("delMsg").innerHTML='<div class="msg warn" style="margin-bottom:10px">'+T("Clique de nouveau pour confirmer la suppression de "+list.length+" mois","Click again to confirm deleting "+list.length+" month(s)")+(list.length<=6?" ("+list.map(fmtM).join(", ")+")":"")+T(". Toute autre action annule.",". Any other action cancels.")+'</div>';return}
+    list.forEach(k=>delete S.months[k]);persist();S.selDel=new Set();if(S.editing&&!S.months[S.editing])S.editing=null;S.sel=null;render();
+    const m=document.getElementById("delMsg");if(m)m.innerHTML='<div class="msg ok" style="margin-bottom:10px">'+T(list.length+" mois supprimé(s).",list.length+" month(s) deleted.")+'</div>';return}
+  const tr=t.closest("tr.click");if(tr){S.editing=tr.dataset.k;S.editingNew=false;render();document.getElementById("editPanel").scrollIntoView({behavior:"smooth",block:"start"});return}
+  if(t.id==="btnParse"){S.parsed=parseReports(document.getElementById("paste").value);showParsed();return}
+  if(t.id==="btnDiscard"){S.parsed=null;document.getElementById("parseOut").innerHTML="";return}
+  if(t.id==="btnCommit"){t.disabled=true;
+    for(const {d} of S.parsed){const old=S.months[d.mois];d.autres=old?old.autres||0:0;d.notes=old?old.notes||"":"";S.months[d.mois]=d}
+    const saved=persist();const n=S.parsed.length;S.parsed=null;S.sel=keys()[keys().length-1];render();
+    document.getElementById("parseOut").innerHTML=saved?`<div class="msg ok">${T(n+" mois enregistré(s).",n+" month(s) saved.")}</div>`:`<div class="msg bad">${T("Les données sont affichées mais n'ont pas pu être enregistrées dans ce navigateur. Exporte une sauvegarde pour ne pas les perdre.","Data is shown but could not be saved in this browser. Export a backup so you don't lose it.")}</div>`;return}
+  if(t.id==="btnExpJson"){downloadFile("30MH-acquisition-"+T("sauvegarde","backup")+"-"+new Date().toISOString().slice(0,10)+".json",JSON.stringify({version:1,months:S.months,params:S.params},null,1),"application/json");return}
+  if(t.id==="btnExpCsv"){exportCSV();return}
+  if(t.id==="btnImpJson"){document.getElementById("fileJson").click();return}
+  if(t.id==="btnNewMonth"){const ks=keys();S.editing=ks.length?keyAdd(ks[ks.length-1],1):new Date().toISOString().slice(0,7);S.editingNew=true;
+    const p=document.getElementById("editPanel");p.innerHTML=editHTML(S.editing,true);p.hidden=false;p.scrollIntoView({behavior:"smooth"});return}
+  if(t.id==="btnCancelEdit"){S.editing=null;S.editingNew=false;render();return}
+  if(t.id==="btnSaveEdit"){const mi=document.getElementById("e_mois");if(mi&&/^\d{4}-\d{2}$/.test(mi.value))S.editing=mi.value;const k=S.editing;const d=Object.assign({mois:k,fr:{}},S.months[k]||{});d.mois=k;d.fr=Object.assign({},d.fr||{});
+    FIELDS().forEach(([f])=>{const v=parseFloat(document.getElementById("e_"+f).value);d[f]=isFinite(v)?v:null});
+    FRF().forEach(([f])=>{const v=parseFloat(document.getElementById("ef_"+f).value);d.fr[f]=isFinite(v)?v/100:null});
+    d.notes=document.getElementById("e_notes").value.trim();
+    S.months[k]=d;persist();S.editing=null;S.editingNew=false;render();return}
+  if(t.id==="btnDel"){if(t.dataset.confirm!=="1"){t.dataset.confirm="1";t.textContent=T("Confirmer la suppression de ","Confirm deleting ")+fmtM(S.editing);return}
+    S.selDel.delete(S.editing);delete S.months[S.editing];persist();S.editing=null;S.sel=null;render();return}
+  if(t.id==="saveParams"){const g=id=>parseFloat(document.getElementById(id).value);
+    Object.assign(S.params,{cible:g("pCible"),echeance:g("pEch"),prixMensuel:g("pPrix"),budgetMin:g("pBmin"),budgetMax:g("pBmax")});
+    t.textContent=persist()?T("Paramètres enregistrés","Settings saved"):T("Échec de l'enregistrement","Save failed");return}
+});
+V.addEventListener("change",e=>{
+  if(e.target.id==="heatSel"){S.heat=e.target.value;render();return}
+  if(e.target.id!=="fileJson")return;const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{const box=document.getElementById("bkMsg");try{const j=JSON.parse(r.result);if(!j.months||typeof j.months!=="object")throw 0;
+    const n=Object.keys(j.months).length;Object.assign(S.months,j.months);if(j.params)Object.assign(S.params,j.params);persist();S.sel=null;render();
+    document.getElementById("bkMsg").innerHTML='<div class="msg ok">'+T(n+" mois importés.",n+" month(s) imported.")+'</div>'}catch(_){box.innerHTML='<div class="msg bad">'+T("Ce fichier n'est pas une sauvegarde de l'outil. Choisis le fichier .json exporté depuis l'onglet Données.","This file is not a backup from this tool. Choose the .json file exported from the Data tab.")+'</div>'}};
+  r.readAsText(f)});
+
+function printReport(){
+  if(!keys().length){S.tab="donnees";render();return}
+  applyChrome();
+  const today=new Date().toLocaleDateString(LOC(),{year:"numeric",month:"long",day:"numeric"});
+  const blk=(t,html,first)=>`<div class="pblock${first?" first":""}"><h2 class="ptitle">${t}</h2>${html}</div>`;
+  V.innerHTML=`<div class="printhead"><div style="display:flex;align-items:center;gap:14px"><img src="${document.querySelector('.brand img').src}" alt="30 Minute HIT"><div><div class="eyebrow">Repentigny</div><h1>${T("Centre d'acquisition","Acquisition Center")}</h1></div></div><div style="text-align:right;font-size:11px;color:#c9d2d9">${T("Période : ","Period: ")}<b style="color:#fff">${esc(winLabel())}</b><br>${T("Imprimé le ","Printed ")}${today} · ${T(keys().length+" mois de données",keys().length+" months of data")}</div></div>`+
+    blk(T("Tableau de bord","Dashboard"),renderBord(),true)+blk(T("Entonnoir","Funnel"),renderEntonnoir())+blk(T("Budget et acquisition","Budget and acquisition"),renderBudget())+blk(T("Saisonnalité","Seasonality"),renderSaison())+blk(T("Méthode","Method"),renderMethode());
+  runSim();
+  V.querySelectorAll(".printonly").forEach(el=>el.style.display="");
+  const done=()=>{window.removeEventListener("afterprint",done);render()};
+  window.addEventListener("afterprint",done);
+  setTimeout(()=>{try{window.print()}catch(_){done()}},150);
+}
+document.getElementById("btnPrint").addEventListener("click",printReport);
+
+(function init(){
+  let stored=null;try{stored=JSON.parse(localStorage.getItem(LS)||"null")}catch(_){}
+  if(stored&&stored.months){S.months=stored.months;if(stored.params)Object.assign(S.params,stored.params)}
+  else{S.months=JSON.parse(JSON.stringify(SEED));persist()}
+  try{const t=localStorage.getItem("acq-tab");if(t)S.tab=t;const l=localStorage.getItem("acq-lang");if(l==="en"||l==="fr")S.lang=l;
+    const pp=JSON.parse(localStorage.getItem("acq-period")||"null");if(pp){S.custom=!!pp.custom;S.from=pp.from;S.to=pp.to;if(!S.custom&&[1,3,12].includes(pp.win))S.win=pp.win}}catch(_){}
+  S.loaded=true;render();
+})();
+})();
+</script>
+</body>
+</html>
